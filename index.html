@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>الإدارة - نظام رحلات وشيفتات السائقين</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --primary-light: #e0e7ff;
+      --accent: #f97316;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #111827;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --radius: 20px;
+      --shadow: 0 8px 24px -4px rgba(17, 24, 39, 0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: #cbd5e1; color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
+    .app-shell { width: 100%; max-width: 480px; background-color: var(--bg); min-height: 100vh; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.18); overflow-x: hidden; }
+    .app-header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: #fff; padding: 22px 20px 32px; border-bottom-left-radius: 28px; border-bottom-right-radius: 28px; box-shadow: var(--shadow); position: relative; z-index: 10; }
+    .header-top { display: flex; justify-content: space-between; align-items: center; }
+    .brand-title { font-size: 1.35rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .role-badge { background: rgba(255, 255, 255, 0.2); padding: 3px 12px; border-radius: 99px; font-size: 0.78rem; font-weight: 700; }
+    .user-welcome { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .user-welcome h2 { font-size: 1.1rem; font-weight: 700; }
+    .user-welcome p { font-size: 0.82rem; opacity: 0.85; }
+    .icon-btn { background: rgba(255,255,255,0.18); border: none; color: #fff; width: 42px; height: 42px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.15rem; cursor: pointer; position: relative; }
+    .badge-count { position: absolute; top: -4px; left: -4px; background: var(--danger); color: #fff; font-size: 0.7rem; font-weight: 800; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary-dark); }
+    .app-content { flex: 1; padding: 18px 16px 95px; margin-top: -18px; position: relative; z-index: 20; }
+    .card { background: var(--card); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); margin-bottom: 16px; border: 1px solid rgba(229,231,235,0.6); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .card-title { font-size: 1.02rem; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 6px; }
+    .action-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 18px; }
+    .big-tile { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 20px 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; box-shadow: var(--shadow); cursor: pointer; }
+    .big-tile .tile-icon { width: 56px; height: 56px; border-radius: 18px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.65rem; }
+    .big-tile span { font-weight: 800; font-size: 0.96rem; color: var(--text); }
+    .big-tile small { font-size: 0.76rem; color: var(--text-muted); margin-top: -6px; }
+    .log-actions-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 14px 0; }
+    .mini-action-btn { background: #f8fafc; border: 1px solid var(--border); border-radius: 14px; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; font-size: 0.75rem; font-weight: 700; color: var(--text); }
+    .mini-action-btn i { font-style: normal; font-size: 1.25rem; }
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+    .form-control { width: 100%; padding: 12px 14px; border-radius: 14px; border: 1.5px solid var(--border); background: #f9fafb; font-size: 0.94rem; font-weight: 600; color: var(--text); outline: none; }
+    .form-control:focus { border-color: var(--primary); background: #fff; }
+    .btn { width: 100%; padding: 13px 18px; border-radius: 14px; border: none; font-size: 0.96rem; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+    .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
+    .btn-danger { background: #fee2e2; color: #b91c1c; }
+    .btn-sm { width: auto; padding: 6px 12px; font-size: 0.8rem; border-radius: 10px; }
+    .pill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; }
+    .pill-primary { background: var(--primary-light); color: var(--primary-dark); }
+    .pill-success { background: #d1fae5; color: #065f46; }
+    .pill-warning { background: #fef3c7; color: #92400e; }
+    .pill-danger { background: #fee2e2; color: #991b1b; }
+    .info-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px dashed var(--border); font-size: 0.88rem; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: var(--text-muted); font-weight: 600; }
+    .info-val { font-weight: 800; color: var(--text); }
+    .contact-actions { display: flex; gap: 6px; }
+    .btn-call { background: #e0f2fe; color: #0369a1; text-decoration: none; padding: 6px 10px; border-radius: 10px; font-size: 0.78rem; font-weight: 700; }
+    .btn-wa { background: #dcfce7; color: #15803d; text-decoration: none; padding: 6px 10px; border-radius: 10px; font-size: 0.78rem; font-weight: 700; }
+    .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 480px; background: #ffffff; border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 8px 6px 12px; z-index: 50; }
+    .nav-item { border: none; background: none; display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-muted); font-size: 0.74rem; font-weight: 700; cursor: pointer; padding: 6px 12px; border-radius: 14px; }
+    .nav-item.active { color: var(--primary); background: var(--primary-light); }
+    .nav-item span.icon { font-size: 1.25rem; }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.55); backdrop-filter: blur(3px); display: none; justify-content: center; align-items: flex-end; z-index: 100; }
+    .modal-backdrop.show { display: flex; }
+    .modal-sheet { width: 100%; max-width: 480px; background: #fff; border-top-left-radius: 28px; border-top-right-radius: 28px; padding: 22px 18px 28px; max-height: 88vh; overflow-y: auto; }
+    .tabs-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 14px; }
+    .tab-btn { padding: 8px 14px; border-radius: 12px; border: 1.5px solid var(--border); background: #fff; font-weight: 700; font-size: 0.82rem; white-space: nowrap; cursor: pointer; }
+    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .login-screen { min-height: 100vh; padding: 28px 20px; display: flex; flex-direction: column; justify-content: center; background: linear-gradient(160deg, #1e1b4b 0%, #4338ca 55%, #4f46e5 100%); color: #fff; }
+    .login-card { background: #fff; color: var(--text); border-radius: 26px; padding: 24px 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); }
+    .demo-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .demo-chip { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 99px; padding: 4px 10px; font-size: 0.74rem; font-weight: 700; cursor: pointer; color: #1e293b; }
+    .toast { position: fixed; top: 18px; left: 50%; transform: translateX(-50%); background: #111827; color: #fff; padding: 10px 18px; border-radius: 99px; font-size: 0.84rem; font-weight: 700; z-index: 200; box-shadow: 0 8px 20px rgba(0,0,0,0.25); display: none; }
+    .empty-state { text-align: center; padding: 26px 14px; color: var(--text-muted); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+<div class="app-shell" id="appShell"></div>
+<div class="modal-backdrop" id="modalBackdrop" onclick="if(event.target===this) App.closeModal()"><div class="modal-sheet" id="modalContent"></div></div>
+<div class="toast" id="toastBox"></div>
+
+<script>
+const STORAGE_KEY = 'EL_EDARA_STATE_V1';
+const DESTINATION_FIXED = 'الرحاب – التجمع الأول';
+
+const INITIAL_DATA = {
+  users: [
+    { id: 'u_leader', name: 'الليدر (مدير التشغيل)', username: 'leader', password: '1234', role: 'leader', phone: '01000000000' },
+    { id: 'd1', name: 'إسلام شعراوي', username: 'islam.s', password: '1234', role: 'driver', phone: '01112153863' },
+    { id: 'd2', name: 'إسلام مطرية', username: 'islam.m', password: '1234', role: 'driver', phone: '01015838546' },
+    { id: 'd3', name: 'إسلام الشرقاوي', username: 'islam.e', password: '1234', role: 'driver', phone: '01008051712' },
+    { id: 'd4', name: 'عبدالله فرعون', username: 'abdullah.f', password: '1234', role: 'driver', phone: '01035856408' },
+    { id: 'd5', name: 'محمد بليه', username: 'mohamed.b', password: '1234', role: 'driver', phone: '01144779734' }
+  ],
+  cars: [
+    { id: 'c1', name: 'الغالية', model: '2016' },
+    { id: 'c2', name: 'مريومة', model: '1996' },
+    { id: 'c3', name: 'الچيمبيه', model: '2020' },
+    { id: 'c4', name: 'سيودة', model: '2021' }
+  ],
+  stations: [
+    { id: 's1', name: 'دائري أم بيومي' },
+    { id: 's2', name: 'دائري بهتيم' },
+    { id: 's3', name: 'دائري قليوب' },
+    { id: 's4', name: 'بلبيس المحطة' },
+    { id: 's5', name: 'المسلة المطرية' }
+  ],
+  shifts: [
+    { id: 'sh1', name: 'الشيفت الأول', pickupTime: '06:30 صباحًا', arrivalTime: '08:00 صباحًا', waitTime: null, returnTime: '08:30 صباحًا' },
+    { id: 'sh2', name: 'الشيفت الثاني', pickupTime: '03:30 عصرًا', arrivalTime: '05:00 مساءً', waitTime: null, returnTime: '05:20 مساءً' },
+    { id: 'sh3', name: 'الشيفت الثالث', pickupTime: '11:00 مساءً', arrivalTime: '12:00 منتصف الليل', waitTime: '02:20 صباحًا', returnTime: '02:20 صباحًا' }
+  ],
+  trips: [],
+  notifications: []
+};
+
+function formatArabicDate(isoDate) {
+  if (!isoDate) return '';
+  const d = new Date(isoDate + 'T00:00:00');
+  return d.toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function getCurrentTimeArabic() {
+  return new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', hour12: true });
+}
+
+function getMonthKey(isoDate) {
+  if (!isoDate) return '';
+  return isoDate.slice(0, 7);
+}
+
+const DB = {
+  state: null,
+  init() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      try { this.state = JSON.parse(raw); } catch (e) { this.state = JSON.parse(JSON.stringify(INITIAL_DATA)); }
+    } else {
+      this.state = JSON.parse(JSON.stringify(INITIAL_DATA));
+      this.save();
+    }
+  },
+  save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state));
+  },
+  getDriver(id) { return this.state.users.find(u => u.id === id) || { name: 'غير محدد', phone: '' }; },
+  getCar(id) { return this.state.cars.find(c => c.id === id) || { name: 'غير محدد', model: '' }; },
+  getStation(id) { return this.state.stations.find(s => s.id === id) || { name: 'غير محدد' }; },
+  getShift(id) { return this.state.shifts.find(s => s.id === id) || { name: 'غير محدد', pickupTime: '-', arrivalTime: '-', returnTime: '-' }; }
+};
+
+const App = {
+  currentUser: null,
+  currentScreen: 'home',
+  manageTab: 'trips',
+  reportMonth: new Date().toISOString().slice(0, 7),
+
+  init() {
+    DB.init();
+    const savedUserId = sessionStorage.getItem('EDARA_USER_ID');
+    if (savedUserId) {
+      const found = DB.state.users.find(u => u.id === savedUserId);
+      if (found) this.currentUser = found;
+    }
+
+    window.history.replaceState({ screen: 'home', modal: false }, '');
+    window.addEventListener('popstate', () => {
+      const modalEl = document.getElementById('modalBackdrop');
+      if (modalEl && modalEl.classList.contains('show')) {
+        modalEl.classList.remove('show');
+        return;
+      }
+      if (this.currentUser && this.currentScreen !== 'home') {
+        this.currentScreen = 'home';
+        this.render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    this.render();
+  },
+
+  toast(msg) {
+    const el = document.getElementById('toastBox');
+    el.textContent = msg;
+    el.style.display = 'block';
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => { el.style.display = 'none'; }, 2600);
+  },
+
+  openModal(html) {
+    document.getElementById('modalContent').innerHTML = html;
+    document.getElementById('modalBackdrop').classList.add('show');
+    window.history.pushState({ screen: this.currentScreen, modal: true }, '');
+  },
+
+  closeModal() {
+    const modalEl = document.getElementById('modalBackdrop');
+    if (modalEl && modalEl.classList.contains('show')) {
+      modalEl.classList.remove('show');
+      if (window.history.state && window.history.state.modal) {
+        window.history.back();
+      }
+    }
+  },
+
+  login(username, password) {
+    const cleanUser = (username || '').trim().toLowerCase();
+    const user = DB.state.users.find(u => u.username.toLowerCase() === cleanUser && u.password === password);
+    if (!user) {
+      this.toast('❌ اسم المستخدم أو كلمة المرور غير صحيحة');
+      return;
+    }
+    this.currentUser = user;
+    sessionStorage.setItem('EDARA_USER_ID', user.id);
+    this.currentScreen = 'home';
+    this.toast(`مرحباً بك يا ${user.name} 👋`);
+    this.render();
+  },
+
+  quickLogin(username) {
+    document.getElementById('loginUsername').value = username;
+    document.getElementById('loginPassword').value = '1234';
+    this.login(username, '1234');
+  },
+
+  logout() {
+    this.currentUser = null;
+    sessionStorage.removeItem('EDARA_USER_ID');
+    this.render();
+  },
+
+  navigate(screen) {
+    if (this.currentScreen === screen) return;
+    if (screen !== 'home' && this.currentScreen === 'home') {
+      window.history.pushState({ screen: screen, modal: false }, '');
+    } else if (screen !== 'home') {
+      window.history.replaceState({ screen: screen, modal: false }, '');
+    }
+
+    this.currentScreen = screen;
+    if (screen === 'notifications' && this.currentUser?.role === 'leader') {
+      DB.state.notifications.forEach(n => n.isRead = true);
+      DB.save();
+    }
+    this.render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  render() {
+    const shell = document.getElementById('appShell');
+    if (!this.currentUser) {
+      shell.innerHTML = this.renderLoginScreen();
+      return;
+    }
+    if (this.currentUser.role === 'leader') {
+      shell.innerHTML = this.renderLeaderLayout();
+    } else {
+      shell.innerHTML = this.renderDriverLayout();
+    }
+  },
+
+  renderLoginScreen() {
+    const drivers = DB.state.users.filter(u => u.role === 'driver');
+    return `
+      <div class="login-screen">
+        <div style="text-align:center; margin-bottom:22px;">
+          <div style="font-size:3rem; margin-bottom:4px;">🚘</div>
+          <h1 style="font-size:1.8rem; font-weight:800;">تطبيق الإدارة</h1>
+          <p style="opacity:0.85; font-size:0.9rem;">النظام الذكي لإدارة رحلات وشيفتات السائقين</p>
+        </div>
+        <div class="login-card">
+          <h3 style="margin-bottom:14px; font-size:1.1rem; font-weight:800;">🔐 تسجيل الدخول</h3>
+          <form onsubmit="event.preventDefault(); App.login(document.getElementById('loginUsername').value, document.getElementById('loginPassword').value)">
+            <div class="form-group"><label class="form-label">اسم المستخدم</label><input id="loginUsername" type="text" class="form-control" placeholder="leader أو islam.s" required></div>
+            <div class="form-group"><label class="form-label">كلمة المرور</label><input id="loginPassword" type="password" class="form-control" value="1234" required></div>
+            <button type="submit" class="btn btn-primary">دخول للنظام</button>
+          </form>
+          <div style="margin-top:18px; padding-top:14px; border-top:1px dashed var(--border);">
+            <div style="font-size:0.78rem; color:var(--text-muted); font-weight:700;">⚡ دخول سريع (كلمة المرور 1234):</div>
+            <div class="demo-chips">
+              <span class="demo-chip" style="background:#e0e7ff; color:#3730a3;" onclick="App.quickLogin('leader')">👑 الليدر</span>
+              ${drivers.map(d => `<span class="demo-chip" onclick="App.quickLogin('${d.username}')">🚗 ${d.name}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  renderLeaderLayout() {
+    const unreadCount = DB.state.notifications.filter(n => !n.isRead).length;
+    let bodyHTML = '';
+    switch (this.currentScreen) {
+      case 'trip_select': bodyHTML = this.renderLeaderTripSelector(); break;
+      case 'reports': bodyHTML = this.renderLeaderReports(); break;
+      case 'notifications': bodyHTML = this.renderNotificationsView(); break;
+      case 'manage': bodyHTML = this.renderLeaderManage(); break;
+      default: bodyHTML = this.renderLeaderHome(unreadCount); break;
+    }
+
+    return `
+      <header class="app-header">
+        <div class="header-top">
+          <div class="brand-title"><span>👑 الإدارة</span><span class="role-badge">صلاحية ليدر</span></div>
+          <div style="display:flex; gap:8px;">
+            <button class="icon-btn" onclick="App.navigate('notifications')">🔔${unreadCount > 0 ? `<span class="badge-count">${unreadCount}</span>` : ''}</button>
+            <button class="icon-btn" onclick="App.logout()">🚪</button>
+          </div>
+        </div>
+        <div class="user-welcome">
+          <div><h2>أهلاً، ${this.currentUser.name}</h2><p>الوجهة: ${DESTINATION_FIXED}</p></div>
+          ${this.currentScreen !== 'home' ? `<button class="btn btn-sm" style="background:rgba(255,255,255,0.2); color:#fff;" onclick="App.navigate('home')">🏠 الرئيسية</button>` : ''}
+        </div>
+      </header>
+      <main class="app-content">${bodyHTML}</main>
+      <nav class="bottom-nav">
+        <button class="nav-item ${this.currentScreen === 'home' ? 'active' : ''}" onclick="App.navigate('home')"><span class="icon">🏠</span><span>الرئيسية</span></button>
+        <button class="nav-item ${this.currentScreen === 'trip_select' ? 'active' : ''}" onclick="App.navigate('trip_select')"><span class="icon">🚗</span><span>رحلة</span></button>
+        <button class="nav-item ${this.currentScreen === 'reports' ? 'active' : ''}" onclick="App.navigate('reports')"><span class="icon">📊</span><span>التقارير</span></button>
+        <button class="nav-item ${this.currentScreen === 'notifications' ? 'active' : ''}" onclick="App.navigate('notifications')"><span class="icon">🔔</span><span>الإشعارات</span></button>
+        <button class="nav-item ${this.currentScreen === 'manage' ? 'active' : ''}" onclick="App.navigate('manage')"><span class="icon">⚙️</span><span>الإدارة</span></button>
+      </nav>
+    `;
+  },
+
+  renderLeaderHome(unreadCount) {
+    const todayISO = new Date().toISOString().split('T')[0];
+    const todayTrips = DB.state.trips.filter(t => t.dateISO === todayISO).length;
+    return `
+      <div class="card" style="display:flex;
